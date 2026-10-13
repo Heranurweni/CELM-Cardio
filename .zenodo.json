@@ -1,1 +1,14 @@
-
+{
+  "title": "CELM-Cardio: code and results for heterogeneous CNN ensemble cardiomegaly classification with leakage-controlled evaluation and external validation",
+  "upload_type": "software",
+  "description": "Code, patient-level split manifest, experiment configuration, per-image predictions (NIH ChestX-ray14 validation/meta/test and CheXpert cohorts A/B), metrics, statistical tests, automated CTR measurements, training logs, XGBoost meta-learners and figures for the article submitted to the International Journal of Intelligent Engineering and Systems (Paper ID 20266157). Chest radiographs are not redistributed.",
+  "creators": [
+    {"name": "Heranurweni, Sri", "affiliation": "Department of Electrical Engineering, Institut Teknologi Sepuluh Nopember, Surabaya, Indonesia"},
+    {"name": "Purnomo, Mauridhi Hery", "affiliation": "Department of Electrical Engineering and Department of Computer Engineering, Institut Teknologi Sepuluh Nopember, Surabaya, Indonesia"},
+    {"name": "Yuniarno, Eko Mulyanto", "affiliation": "Department of Electrical Engineering and Department of Computer Engineering, Institut Teknologi Sepuluh Nopember, Surabaya, Indonesia"},
+    {"name": "Mardiyanto, Ronny", "affiliation": "Department of Electrical Engineering, Institut Teknologi Sepuluh Nopember, Surabaya, Indonesia"}
+  ],
+  "keywords": ["cardiomegaly", "chest radiograph", "deep learning ensemble", "external validation", "CheXpert", "NIH ChestX-ray14", "cardiothoracic ratio"],
+  "license": "MIT",
+  "access_right": "open"
+}
