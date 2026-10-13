@@ -1,0 +1,89 @@
+{
+  "method": "xrv",
+  "cutoff": 0.5,
+  "definition": "CTR = MHD/MTD; MHD = max horizontal heart width; MTD = widest horizontal distance between lateral lung borders; QC: masks present, 0.25<=CTR<=0.85, heart between lungs",
+  "qc_pass_rate": {
+    "chexpert_B": 0.988,
+    "meta": 0.9950166112956811,
+    "test": 0.9920382165605095
+  },
+  "by_class": {
+    "cardiomegaly": "0.520 [0.484\u20130.560]",
+    "non_cardiomegaly": "0.436 [0.392\u20130.479]",
+    "mannwhitney_p": 1.8418425275688973e-40
+  },
+  "baseline": {
+    "n": 623,
+    "auc_ctr": 0.8466947319031358,
+    "auc_ctr_ci": [
+      0.7922635344032016,
+      0.8930720365724436
+    ],
+    "auc_final_same_subset": 0.8947553632406225,
+    "delong_p": 0.008696162851987847,
+    "rule_0.50": {
+      "Sensitivity": 0.6331360946745562,
+      "Specificity": 0.8414096916299559,
+      "Accuracy": 0.7849117174959872
+    },
+    "youden_thr_meta": 0.4766666666666667,
+    "rule_youden": {
+      "Sensitivity": 0.8106508875739645,
+      "Specificity": 0.737885462555066,
+      "Accuracy": 0.7576243980738363
+    }
+  },
+  "error_groups": [
+    {
+      "Kelompok": "TP",
+      "n": 117,
+      "CTR median [IQR]": "0.526 [0.494\u20130.564]",
+      "% CTR>0.50": "70.1",
+      "% CTR 0.50\u20130.55": "35.0"
+    },
+    {
+      "Kelompok": "FN",
+      "n": 52,
+      "CTR median [IQR]": "0.497 [0.475\u20130.527]",
+      "% CTR>0.50": "48.1",
+      "% CTR 0.50\u20130.55": "30.8"
+    },
+    {
+      "Kelompok": "TN",
+      "n": 407,
+      "CTR median [IQR]": "0.431 [0.389\u20130.467]",
+      "% CTR>0.50": "12.3",
+      "% CTR 0.50\u20130.55": "10.3"
+    },
+    {
+      "Kelompok": "FP",
+      "n": 47,
+      "CTR median [IQR]": "0.496 [0.474\u20130.525]",
+      "% CTR>0.50": "46.8",
+      "% CTR 0.50\u20130.55": "38.3"
+    }
+  ],
+  "FN_vs_TP_p": 0.0015816562026658991,
+  "spearman": {
+    "rho": 0.6859859604360473,
+    "p": 8.108882716429886e-88
+  },
+  "by_view": {
+    "PA": {
+      "n": 394,
+      "cardiomegaly": "0.508 [0.484\u20130.539]",
+      "non": "0.419 [0.381\u20130.454]"
+    },
+    "AP": {
+      "n": 229,
+      "cardiomegaly": "0.553 [0.504\u20130.600]",
+      "non": "0.468 [0.432\u20130.507]"
+    }
+  },
+  "chexpert_B": {
+    "n": 1976,
+    "auc_ctr": 0.7322726876917639,
+    "auc_final_same_subset": 0.7222945596664396,
+    "delong_p": 0.4474985780922943
+  }
+}

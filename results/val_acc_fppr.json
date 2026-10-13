@@ -1,0 +1,42 @@
+{
+  "val_accuracy": {
+    "eff": 0.7021791767554479,
+    "den": 0.8329297820823245,
+    "res": 0.8498789346246973
+  },
+  "fppr_weights": {
+    "eff": 0.29441624365482233,
+    "den": 0.349238578680203,
+    "res": 0.3563451776649746
+  },
+  "checkpoint": {
+    "eff": {
+      "backbone": "EfficientNetB4",
+      "val_accuracy_history": 0.7021791934967041,
+      "epoch": 7,
+      "phase": 2,
+      "phase1_epochs": 6,
+      "total_epochs": 19,
+      "rule": "max val_accuracy over phase 1 + phase 2 (val partition only)"
+    },
+    "den": {
+      "backbone": "DenseNet121",
+      "val_accuracy_history": 0.832929790019989,
+      "epoch": 28,
+      "phase": 2,
+      "phase1_epochs": 14,
+      "total_epochs": 40,
+      "rule": "max val_accuracy over phase 1 + phase 2 (val partition only)"
+    },
+    "res": {
+      "backbone": "ResNet50V2",
+      "val_accuracy_history": 0.8498789072036743,
+      "epoch": 29,
+      "phase": 2,
+      "phase1_epochs": 14,
+      "total_epochs": 41,
+      "rule": "max val_accuracy over phase 1 + phase 2 (val partition only)"
+    }
+  },
+  "n_val_images": 413
+}

@@ -1,0 +1,50 @@
+{
+  "A": {
+    "definition": "Cardiomegaly tunggal vs No Finding (setara NIH)",
+    "n_images": 2000,
+    "n_patients": 2000,
+    "n_cardiomegaly": 1000,
+    "n_non_cardiomegaly": 1000,
+    "cardiomegaly_with_comorbidity": 0,
+    "negatives_with_other_abnormality": 0,
+    "view_counts": {
+      "AP": 1440,
+      "PA": 560
+    }
+  },
+  "B": {
+    "definition": "Cardiomegaly (termasuk komorbid) vs semua non-kardiomegali (normal & kelainan lain)",
+    "n_images": 2000,
+    "n_patients": 2000,
+    "n_cardiomegaly": 1000,
+    "n_non_cardiomegaly": 1000,
+    "cardiomegaly_with_comorbidity": 824,
+    "negatives_with_other_abnormality": 798,
+    "view_counts": {
+      "AP": 1626,
+      "PA": 374
+    },
+    "by_view": {
+      "PA": {
+        "n": 374,
+        "AUC": 0.8033109856504352,
+        "AUC_CI": [
+          0.7602968217464862,
+          0.8478237209624857
+        ],
+        "sens_at_thr": 0.7628205128205128,
+        "spec_at_thr": 0.6972477064220184
+      },
+      "AP": {
+        "n": 1626,
+        "AUC": 0.7027869359159284,
+        "AUC_CI": [
+          0.6777000254491126,
+          0.7276151805648661
+        ],
+        "sens_at_thr": 0.5651658767772512,
+        "spec_at_thr": 0.7148337595907929
+      }
+    }
+  }
+}

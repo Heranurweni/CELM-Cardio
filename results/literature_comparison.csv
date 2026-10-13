@@ -1,0 +1,6 @@
+Metode,Dataset / protokol,Accuracy,AUC,Sumber,Catatan
+EfficientNetB7,Kaggle Cardiomegaly,94.0%,-,Academia.edu 2024 — verifikasi,Protokol berbeda — bukan perbandingan langsung
+DenseNet121,NIH (718 citra),95.2%,-,MDPI App. Sci. 2024 — verifikasi,Protokol berbeda — bukan perbandingan langsung
+CNN AdaMax,NIH 112K,99.9%,-,Sorour IJIS 2024 — verifikasi,Protokol berbeda — bukan perbandingan langsung
+Cardio-XAttNet,ChestX-ray14,88.0%,0.89,Sci. Rep. 2023 — verifikasi,Protokol berbeda — bukan perbandingan langsung
+CELM-Cardio (FPPR +TTA),"NIH, split per pasien (ini)",84.24% [81.2–87.1],0.895 [0.863–0.923],Penelitian ini,"Test tunggal, CI bootstrap per pasien"

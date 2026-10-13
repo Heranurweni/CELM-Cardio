@@ -1,0 +1,429 @@
+{
+  "version": "v8-revisi-reviewer",
+  "dataset": "NIH ChestX-ray14 (khanfashee/nih-chest-x-ray-14-224x224-resized)",
+  "classes": {
+    "positive": "Cardiomegaly (single label)",
+    "negative": "No Finding"
+  },
+  "seed": 42,
+  "n_per_class_cap": 3000,
+  "split": {
+    "level": "patient",
+    "stratified_on": "patient has any Cardiomegaly image",
+    "ratio": {
+      "train": 0.6,
+      "val": 0.1,
+      "meta": 0.15,
+      "test": 0.15
+    },
+    "counts": {
+      "train": {
+        "images": 2451,
+        "images_cardiomegaly": 666,
+        "images_non_cardiomegaly": 1785,
+        "patients": 1991
+      },
+      "val": {
+        "images": 413,
+        "images_cardiomegaly": 107,
+        "images_non_cardiomegaly": 306,
+        "patients": 332
+      },
+      "meta": {
+        "images": 602,
+        "images_cardiomegaly": 152,
+        "images_non_cardiomegaly": 450,
+        "patients": 499
+      },
+      "test": {
+        "images": 628,
+        "images_cardiomegaly": 169,
+        "images_non_cardiomegaly": 459,
+        "patients": 498
+      }
+    },
+    "roles": {
+      "train": "fit backbones",
+      "val": "checkpoint/early stopping + FPPR weights",
+      "meta": "fit XGBoost + model selection + operating threshold",
+      "test": "single final evaluation"
+    }
+  },
+  "training": {
+    "img_size": [
+      224,
+      224
+    ],
+    "batch": 32,
+    "lr_head": 0.001,
+    "lr_fine": 2e-05,
+    "epochs_head": 15,
+    "epochs_fine": 60,
+    "loss": "focal (gamma=2.0, alpha=0.25)",
+    "class_weight": {
+      "0": 0.6865546218487395,
+      "1": 1.84009009009009
+    },
+    "aug_mode": "noflip",
+    "early_stopping": {
+      "phase1_patience": 5,
+      "phase2_patience": 12,
+      "monitor": "val_accuracy"
+    },
+    "checkpoint_rule": "max val_accuracy over phase 1 + phase 2; phase-2 ModelCheckpoint initial_value_threshold = phase-1 best"
+  },
+  "checkpoints": {
+    "eff": {
+      "backbone": "EfficientNetB4",
+      "val_accuracy_history": 0.7021791934967041,
+      "epoch": 7,
+      "phase": 2,
+      "phase1_epochs": 6,
+      "total_epochs": 19,
+      "rule": "max val_accuracy over phase 1 + phase 2 (val partition only)"
+    },
+    "den": {
+      "backbone": "DenseNet121",
+      "val_accuracy_history": 0.832929790019989,
+      "epoch": 28,
+      "phase": 2,
+      "phase1_epochs": 14,
+      "total_epochs": 40,
+      "rule": "max val_accuracy over phase 1 + phase 2 (val partition only)"
+    },
+    "res": {
+      "backbone": "ResNet50V2",
+      "val_accuracy_history": 0.8498789072036743,
+      "epoch": 29,
+      "phase": 2,
+      "phase1_epochs": 14,
+      "total_epochs": 41,
+      "rule": "max val_accuracy over phase 1 + phase 2 (val partition only)"
+    }
+  },
+  "val_accuracy": {
+    "eff": 0.7021791767554479,
+    "den": 0.8329297820823245,
+    "res": 0.8498789346246973
+  },
+  "fppr": {
+    "equation": "w_k = Acc_val_k / sum_j Acc_val_j",
+    "weights": {
+      "eff": 0.29441624365482233,
+      "den": 0.349238578680203,
+      "res": 0.3563451776649746
+    }
+  },
+  "tta": {
+    "n": 5,
+    "seed": 42,
+    "transforms": {
+      "rotation_range": 10,
+      "zoom_range": 0.05,
+      "horizontal_flip": false
+    }
+  },
+  "xgboost": {
+    "grid": {
+      "max_depth": [
+        2,
+        3,
+        4
+      ],
+      "n_estimators": [
+        100,
+        300
+      ],
+      "learning_rate": [
+        0.05
+      ],
+      "min_child_weight": [
+        1,
+        5
+      ]
+    },
+    "cv": "StratifiedGroupKFold(5) by patient on meta partition",
+    "oof_for_selection": "nested CV",
+    "models": {
+      "XGB(BB)": {
+        "n_features": 6,
+        "best_params": {
+          "learning_rate": 0.05,
+          "max_depth": 2,
+          "min_child_weight": 1,
+          "n_estimators": 100
+        },
+        "cv_auc_meta": 0.8828168287585502,
+        "trained_on": "meta partition only",
+        "n_train": 602
+      },
+      "XGB(BB+FPPR)": {
+        "n_features": 8,
+        "best_params": {
+          "learning_rate": 0.05,
+          "max_depth": 2,
+          "min_child_weight": 1,
+          "n_estimators": 100
+        },
+        "cv_auc_meta": 0.8839599382360348,
+        "trained_on": "meta partition only",
+        "n_train": 602
+      },
+      "XGB(BB) +TTA": {
+        "n_features": 6,
+        "best_params": {
+          "learning_rate": 0.05,
+          "max_depth": 2,
+          "min_child_weight": 5,
+          "n_estimators": 100
+        },
+        "cv_auc_meta": 0.881636820777149,
+        "trained_on": "meta partition only",
+        "n_train": 602
+      },
+      "XGB(BB+FPPR) +TTA": {
+        "n_features": 8,
+        "best_params": {
+          "learning_rate": 0.05,
+          "max_depth": 2,
+          "min_child_weight": 1,
+          "n_estimators": 100
+        },
+        "cv_auc_meta": 0.8841169177824953,
+        "trained_on": "meta partition only",
+        "n_train": 602
+      }
+    }
+  },
+  "model_selection": {
+    "criterion": "max AUC on meta partition (4 d.p.), tie-break: min Brier on meta",
+    "meta_auc": {
+      "EfficientNetB4": 0.6457894736842107,
+      "DenseNet121": 0.8740643274853802,
+      "ResNet50V2": 0.8942251461988303,
+      "Mean": 0.896359649122807,
+      "FPPR": 0.8971637426900584,
+      "XGB(BB)": 0.8758187134502924,
+      "XGB(BB+FPPR)": 0.8742178362573099,
+      "EfficientNetB4 +TTA": 0.6466228070175439,
+      "DenseNet121 +TTA": 0.8810818713450292,
+      "ResNet50V2 +TTA": 0.897046783625731,
+      "Mean +TTA": 0.8983918128654972,
+      "FPPR +TTA": 0.8998538011695907,
+      "XGB(BB) +TTA": 0.8783187134502924,
+      "XGB(BB+FPPR) +TTA": 0.8742032163742691
+    },
+    "meta_brier": {
+      "EfficientNetB4": 0.2010430091186891,
+      "DenseNet121": 0.1358578369819281,
+      "ResNet50V2": 0.11959514786827895,
+      "Mean": 0.13674839617037363,
+      "FPPR": 0.1343988735746026,
+      "XGB(BB)": 0.14033222493919673,
+      "XGB(BB+FPPR)": 0.1379601599430263,
+      "EfficientNetB4 +TTA": 0.20330864937078963,
+      "DenseNet121 +TTA": 0.1368619305185153,
+      "ResNet50V2 +TTA": 0.11878192979214448,
+      "Mean +TTA": 0.1393446710100958,
+      "FPPR +TTA": 0.13684347484478737,
+      "XGB(BB) +TTA": 0.13800948698113572,
+      "XGB(BB+FPPR) +TTA": 0.13355696876595632
+    },
+    "final_model": "FPPR +TTA",
+    "threshold_rule": "Youden J on meta partition",
+    "thresholds": {
+      "EfficientNetB4": 0.4037109613418579,
+      "DenseNet121": 0.4915998876094818,
+      "ResNet50V2": 0.4169154763221741,
+      "Mean": 0.41864725947380066,
+      "FPPR": 0.4077358841896057,
+      "XGB(BB)": 0.3188224136829376,
+      "XGB(BB+FPPR)": 0.2880430519580841,
+      "EfficientNetB4 +TTA": 0.4261283278465271,
+      "DenseNet121 +TTA": 0.4385322034358978,
+      "ResNet50V2 +TTA": 0.4014700949192047,
+      "Mean +TTA": 0.403170108795166,
+      "FPPR +TTA": 0.3997902274131775,
+      "XGB(BB) +TTA": 0.3849713206291199,
+      "XGB(BB+FPPR) +TTA": 0.3848862051963806
+    }
+  },
+  "evaluation": {
+    "test_used_once": true,
+    "bootstrap": "2000 patient-level resamples",
+    "tests": "DeLong (AUC), exact McNemar (accuracy @0.5), Holm correction",
+    "calibration": "Brier, ECE (10 equal-width bins)"
+  },
+  "test_results_final": {
+    "AUC": 0.8951154426267548,
+    "Accuracy": 0.8423566878980892,
+    "Sensitivity": 0.6923076923076923,
+    "Specificity": 0.8976034858387799,
+    "Precision": 0.7134146341463414,
+    "F1": 0.7027027027027026,
+    "Brier": 0.1425028335218174,
+    "ECE": 0.163518338161669
+  },
+  "external_chexpert": {
+    "A": {
+      "definition": "Cardiomegaly tunggal vs No Finding (setara NIH)",
+      "n_images": 2000,
+      "n_patients": 2000,
+      "n_cardiomegaly": 1000,
+      "n_non_cardiomegaly": 1000,
+      "cardiomegaly_with_comorbidity": 0,
+      "negatives_with_other_abnormality": 0,
+      "view_counts": {
+        "AP": 1440,
+        "PA": 560
+      }
+    },
+    "B": {
+      "definition": "Cardiomegaly (termasuk komorbid) vs semua non-kardiomegali (normal & kelainan lain)",
+      "n_images": 2000,
+      "n_patients": 2000,
+      "n_cardiomegaly": 1000,
+      "n_non_cardiomegaly": 1000,
+      "cardiomegaly_with_comorbidity": 824,
+      "negatives_with_other_abnormality": 798,
+      "view_counts": {
+        "AP": 1626,
+        "PA": 374
+      },
+      "by_view": {
+        "PA": {
+          "n": 374,
+          "AUC": 0.8033109856504352,
+          "AUC_CI": [
+            0.7602968217464862,
+            0.8478237209624857
+          ],
+          "sens_at_thr": 0.7628205128205128,
+          "spec_at_thr": 0.6972477064220184
+        },
+        "AP": {
+          "n": 1626,
+          "AUC": 0.7027869359159284,
+          "AUC_CI": [
+            0.6777000254491126,
+            0.7276151805648661
+          ],
+          "sens_at_thr": 0.5651658767772512,
+          "spec_at_thr": 0.7148337595907929
+        }
+      }
+    }
+  },
+  "external_results_final": {
+    "A": {
+      "AUC": 0.802252,
+      "Accuracy": 0.6755,
+      "Sensitivity": 0.439,
+      "Specificity": 0.912,
+      "Precision": 0.8330170777988615,
+      "F1": 0.5749836280288146,
+      "Brier": 0.20682266850102687,
+      "ECE": 0.1270067226216197
+    },
+    "B": {
+      "AUC": 0.7195290000000001,
+      "Accuracy": 0.609,
+      "Sensitivity": 0.301,
+      "Specificity": 0.917,
+      "Precision": 0.7838541666666666,
+      "F1": 0.4349710982658959,
+      "Brier": 0.23081793493723543,
+      "ECE": 0.12082049709558484
+    }
+  },
+  "ctr": {
+    "method": "xrv",
+    "cutoff": 0.5,
+    "definition": "CTR = MHD/MTD; MHD = max horizontal heart width; MTD = widest horizontal distance between lateral lung borders; QC: masks present, 0.25<=CTR<=0.85, heart between lungs",
+    "qc_pass_rate": {
+      "chexpert_B": 0.988,
+      "meta": 0.9950166112956811,
+      "test": 0.9920382165605095
+    },
+    "by_class": {
+      "cardiomegaly": "0.520 [0.484\u20130.560]",
+      "non_cardiomegaly": "0.436 [0.392\u20130.479]",
+      "mannwhitney_p": 1.8418425275688973e-40
+    },
+    "baseline": {
+      "n": 623,
+      "auc_ctr": 0.8466947319031358,
+      "auc_ctr_ci": [
+        0.7922635344032016,
+        0.8930720365724436
+      ],
+      "auc_final_same_subset": 0.8947553632406225,
+      "delong_p": 0.008696162851987847,
+      "rule_0.50": {
+        "Sensitivity": 0.6331360946745562,
+        "Specificity": 0.8414096916299559,
+        "Accuracy": 0.7849117174959872
+      },
+      "youden_thr_meta": 0.4766666666666667,
+      "rule_youden": {
+        "Sensitivity": 0.8106508875739645,
+        "Specificity": 0.737885462555066,
+        "Accuracy": 0.7576243980738363
+      }
+    },
+    "error_groups": [
+      {
+        "Kelompok": "TP",
+        "n": 117,
+        "CTR median [IQR]": "0.526 [0.494\u20130.564]",
+        "% CTR>0.50": "70.1",
+        "% CTR 0.50\u20130.55": "35.0"
+      },
+      {
+        "Kelompok": "FN",
+        "n": 52,
+        "CTR median [IQR]": "0.497 [0.475\u20130.527]",
+        "% CTR>0.50": "48.1",
+        "% CTR 0.50\u20130.55": "30.8"
+      },
+      {
+        "Kelompok": "TN",
+        "n": 407,
+        "CTR median [IQR]": "0.431 [0.389\u20130.467]",
+        "% CTR>0.50": "12.3",
+        "% CTR 0.50\u20130.55": "10.3"
+      },
+      {
+        "Kelompok": "FP",
+        "n": 47,
+        "CTR median [IQR]": "0.496 [0.474\u20130.525]",
+        "% CTR>0.50": "46.8",
+        "% CTR 0.50\u20130.55": "38.3"
+      }
+    ],
+    "FN_vs_TP_p": 0.0015816562026658991,
+    "spearman": {
+      "rho": 0.6859859604360473,
+      "p": 8.108882716429886e-88
+    },
+    "by_view": {
+      "PA": {
+        "n": 394,
+        "cardiomegaly": "0.508 [0.484\u20130.539]",
+        "non": "0.419 [0.381\u20130.454]"
+      },
+      "AP": {
+        "n": 229,
+        "cardiomegaly": "0.553 [0.504\u20130.600]",
+        "non": "0.468 [0.432\u20130.507]"
+      }
+    },
+    "chexpert_B": {
+      "n": 1976,
+      "auc_ctr": 0.7322726876917639,
+      "auc_final_same_subset": 0.7222945596664396,
+      "delong_p": 0.4474985780922943
+    }
+  },
+  "timestamp": "2026-10-07 16:59:33"
+}
